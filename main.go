@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -19,13 +18,8 @@ func main() {
 	}
 	defer resp.Body.Close()
 	var userData map[string]interface{}
-	dec := json.NewDecoder(resp.Body)
-	for {
-		if err := dec.Decode(&userData); err == io.EOF {
-			break
-		} else if err != nil {
-			panic(err)
-		}
+	if err := json.NewDecoder(resp.Body).Decode(&userData); err != nil {
+		panic(err)
 	}
 	name := userData["name"]
 
@@ -39,13 +33,8 @@ func main() {
 	}
 	defer resp.Body.Close()
 	var dat []interface{}
-	for {
-		dec = json.NewDecoder(resp.Body)
-		if err := dec.Decode(&dat); err == io.EOF {
-			break
-		} else if err != nil {
-			panic(err)
-		}
+	if err := json.NewDecoder(resp.Body).Decode(&dat); err != nil {
+		panic(err)
 	}
 	//fmt.Println(dat)
 	for _, e := range dat {
